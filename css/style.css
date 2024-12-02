@@ -4,3 +4,23 @@
     display: inline-block;
     align-items: center;
 }
+
+
+/* MAIN */
+.carousel-item img {
+    height: 550px; /* Set a fixed height for the images */
+    object-fit: cover; /* Ensure the image covers the entire area */
+}
+
+.carousel-caption p.opacity-75{
+    color: black; /* Set the font color to black with higher specificity */
+}
+    
+    main h1 {
+        color: white; /* Set the font color to black */
+        text-shadow: 
+            -1px -1px 0 #000000,  
+             1px -1px 0 #000000,
+            -1px  1px 0 #000000,
+             1px  1px 0 #000000
+    }
