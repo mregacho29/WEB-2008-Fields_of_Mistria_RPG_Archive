@@ -1,10 +1,21 @@
 <?php
 require('connect.php');
 include('functions.php');
+
+// Redirect logged-in users to the homepage with a message
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
+    $_SESSION['alert_message'] = "You are already registered and logged in.";
+    header('Location: index.php');
+    exit;
+}
+
+
 include('header.php');
 
 $error_message = ''; // Variable to store error message
 $success_message = ''; // Variable to store success message
+
+
 
 if (!empty($_POST)) {
     $username = $_POST['username'];

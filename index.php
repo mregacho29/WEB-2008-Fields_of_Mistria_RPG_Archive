@@ -2,12 +2,19 @@
 require('connect.php');
 include('functions.php');
 
+if (isset($_SESSION['alert_message'])) {
+  echo '<div class="alert alert-success text-center" role="alert">' . $_SESSION['alert_message'] . '</div>';
+  unset($_SESSION['alert_message']);
+}
+
    // Debugging: Check if the database connection is successful
     // if (!$db) {
     //     die("Database connection failed.");
     // }
 
-    $query = "SELECT * FROM characters ORDER BY character_id DESC";
+    $query = "SELECT character_id, name, description, image 
+        FROM characters 
+        ORDER BY character_id DESC";
 
     // Prepare a PDO statement
     $statement = $db->prepare($query);
@@ -16,7 +23,8 @@ include('functions.php');
     $statement->execute();
     
     // fetch the entire Database
-    $rows = $statement->fetchAll();
+    $characters = $statement->fetchAll();
+
 
 
 
@@ -42,15 +50,18 @@ include('header.php');
         <div class="container">
           <div class="carousel-caption text-start">
             <h1>Discover this New World!</h1>
-            <p class="opacity-75">Join our community to stay updated on the latest news, exclusive content, <br>
-            and special events for Fields of Mistria. Sign up now and be the first to know!</p>
+            <p class="opacity-75">Join our community to stay updated on the latest news,<br> 
+            exclusive content, and special events for Fields of Mistria. <br>
+            Sign up now and be the first to know!</p>
             <p><a class="btn btn-lg btn-primary" href="signup.php">Sign up today</a></p>
           </div>
         </div>
       </div>
 
       <div class="carousel-item">
-        <img src="image/DisplayImage1.avif" class="d-block w-100" alt="Second slide">
+        <img src="image/DisplayImage1.avif" 
+            class="d-block w-100" 
+            alt="Second slide">
             <div class="container">
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-start" style="top: 10%;">
                     <h1 class="mb-4">Meet the Characters!</h1>
@@ -97,62 +108,49 @@ include('header.php');
 <div class="container marketing text-center mt-5">
     <!-- Three columns of text below the carousel -->
     <div class="row">
+      <?php foreach ($characters as $character): ?>
         <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
-            <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p>
-            <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
+          <img src="<?php echo filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS); ?>" class="bd-placeholder-img rounded-circle" width="250" height="250" alt="<?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?>">
+          <h2 class="fw-normal mt-5"><?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?></h2>
+          <p><?php echo filter_var($character['description'], FILTER_SANITIZE_SPECIAL_CHARS); ?></p>
+          <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
+      <?php endforeach; ?>
+
         <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
+            <svg class="bd-placeholder-img rounded-circle" width="250" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+            <h2 class="fw-normal mt-2">Heading</h2>
             <p>Another exciting bit of representative placeholder content. This time, we've moved on to the second column.</p>
             <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
+            <svg class="bd-placeholder-img rounded-circle" width="250" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+            <h2 class="fw-normal mt-2">Heading</h2>
             <p>And lastly this, the third column of representative placeholder content.</p>
             <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
 
         <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
+            <svg class="bd-placeholder-img rounded-circle" width="250" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+            <h2 class="fw-normal mt-2">Heading</h2>
             <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p>
             <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
+            <svg class="bd-placeholder-img rounded-circle" width="250" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+            <h2 class="fw-normal mt-2">Heading</h2>
             <p>Another exciting bit of representative placeholder content. This time, we've moved on to the second column.</p>
             <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
+            <svg class="bd-placeholder-img rounded-circle" width="250" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+            <h2 class="fw-normal mt-2">Heading</h2>
             <p>And lastly this, the third column of representative placeholder content.</p>
             <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
 
-        <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
-            <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p>
-            <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
-            <p>Another exciting bit of representative placeholder content. This time, we've moved on to the second column.</p>
-            <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4 mx-auto mt-5">
-            <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-            <h2 class="fw-normal">Heading</h2>
-            <p>And lastly this, the third column of representative placeholder content.</p>
-            <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
+       
+
     </div><!-- /.row -->
 
     <!-- START THE FEATURETTES -->

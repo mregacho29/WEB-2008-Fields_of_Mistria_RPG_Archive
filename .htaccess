@@ -1,6 +1,9 @@
+Options +FollowSymLinks -MultiViews
 RewriteEngine On
 
-# Rewrite URLs to remove .php extension
+# Check if the requested file or directory does not exist
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([^/]+)$ $1.php [L]
+
+# Rewrite the URL
+RewriteRule ^fieldsofmistriarpgarchive/?$ /webdev2/WebDev2Project/ [L]

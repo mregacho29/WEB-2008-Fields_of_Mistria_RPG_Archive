@@ -19,6 +19,7 @@ if (!empty($_POST)) {
 
         if ($user && $password == $user['password']) {
             // Login successful!
+            
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
@@ -42,6 +43,12 @@ if (!empty($_POST)) {
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
+            <?php if (isset($_SESSION['alert_message'])): ?>
+                <div class="alert alert-success text-center" role="alert">
+                    <?= $_SESSION['alert_message'] ?>
+                </div>
+                <?php unset($_SESSION['alert_message']); ?>
+            <?php endif; ?>
             <?php if ($error_message): ?>
                 <!-- Display error message using Bootstrap alert -->
                 <div class="alert alert-danger text-center" role="alert">
