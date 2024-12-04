@@ -5,7 +5,19 @@ include('header.php');
 
 // Fetch all characters from the database
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$query = "SELECT character_id, name, description, image, created_at, updated_at, CONCAT(TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hours ', TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' mins ago') AS time_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";$statement = $db->prepare($query);
+$order = isset($_GET['order']) ? $_GET['order'] : 'A-Z';
+
+$order_by = 'name ASC';
+if ($order === 'Z-A') {
+    $order_by = 'name DESC';
+} elseif ($order === 'Newest') {
+    $order_by = 'created_at DESC';
+} elseif ($order === 'Oldest') {
+    $order_by = 'created_at ASC';
+}
+
+$query = "SELECT character_id, name, description, image, created_at, updated_at, CONCAT(TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hours ', TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' mins ago') AS time_ago FROM characters WHERE name LIKE :search ORDER BY $order_by";
+$statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
 $statement->execute();
 $characters = $statement->fetchAll();
@@ -108,6 +120,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
         </div>
     </main>
 </body>
+
 
 
 

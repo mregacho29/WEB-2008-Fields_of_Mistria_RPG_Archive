@@ -82,9 +82,37 @@ function load() {
 
 
 
+// how to fix the sorting type
 
+/********************************************
+    function:    fetchCharacters
+    Description: fetch all characters from the server
+*********************************************/
+function fetchCharacters(order) {
+    debugMessage("function fetchCharacters");
 
+    let search = document.getElementById("search").value.trim();
+    let url = `view_character.php?search=${encodeURIComponent(search)}&order=${order}`;
+    debugMessage("URL for fetch");
+    debugMessage(url);
 
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            debugMessage("Fetched data:");
+            debugMessage(html);
+
+            document.getElementById("character-container").innerHTML = html;
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+        });
+}
 
 /********************************************
     function:    sortCharacters
@@ -93,28 +121,7 @@ function load() {
 function sortCharacters(order) {
     debugMessage("function sortCharacters");
 
-    let container = document.getElementById("character-container");
-    let characters = Array.from(container.getElementsByClassName("character-box"));
-
-    characters.sort((a, b) => {
-        let nameA = a.querySelector(".character-name").innerText.toUpperCase();
-        let nameB = b.querySelector(".character-name").innerText.toUpperCase();
-        let dateA = new Date(a.dataset.created);
-        let dateB = new Date(b.dataset.created);
-
-        if (order === "A-Z") {
-            return nameA.localeCompare(nameB);
-        } else if (order === "Z-A") {
-            return nameB.localeCompare(nameA);
-        } else if (order === "Newest") {
-            return dateB - dateA;
-        } else if (order === "Oldest") {
-            return dateA - dateB;
-        }
-    });
-
-    container.innerHTML = "";
-    characters.forEach(character => container.appendChild(character));
+    fetchCharacters(order);
 }
 
 /******************************
