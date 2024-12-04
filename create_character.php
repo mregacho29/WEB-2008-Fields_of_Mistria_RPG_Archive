@@ -80,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     header("Location: create_character.php");
     exit;
 
-
 }
 ?>
 

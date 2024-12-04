@@ -1,14 +1,14 @@
 <?php
-session_start(); // Ensure session is started
 require('functions.php');
 require('connect.php');
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    echo "Access denied. You must be logged in to edit characters.";
-    header("refresh:3;url=view_character.php"); // Redirect after 5 seconds
+    echo '<div class="alert alert-danger text-center" role="alert">Access denied. You must be logged in to edit characters.</div>';
+    header("refresh:3;url=view_character.php"); // Redirect after 3 seconds
     exit;
 }
+include('header.php');
 
 // Fetch the user's role from the database
 $user_id = $_SESSION['user_id'];
@@ -20,8 +20,8 @@ $user = $statement->fetch(PDO::FETCH_ASSOC);
 
 // Check if the user has an admin role
 if ($user['role'] !== 'admin') {
-    echo "Access denied. Only admin users can edit characters.";
-    header("refresh:5;url=view_character.php"); // Redirect after 5 seconds
+    echo '<div class="alert alert-danger text-center" role="alert">Access denied. Only admin users can edit characters.</div>';
+    header("refresh:3;url=view_character.php"); // Redirect after 3 seconds
     exit;
 }
 
@@ -41,50 +41,93 @@ if (isset($_GET['id'])) {
         // Get the updated character details from the form
         $name = $_POST['name'];
         $description = $_POST['description'];
-        $image = $_POST['image'];
 
+        // Handle file upload
+        $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+        $upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
+        $invalid_file_detected = false;
+        $image_path = $character['image']; // Default to existing image path
 
+        if ($image_upload_detected) {
+            $file_filename = $_FILES['image']['name'];
+            $temporary_file_path = $_FILES['image']['tmp_name'];
+            $new_file_path = file_upload_path($file_filename);
 
+            if (file_is_valid($temporary_file_path, $new_file_path)) {
+                if (!file_exists(dirname($new_file_path))) {
+                    mkdir(dirname($new_file_path), 0777, true);
+                }
+                move_uploaded_file($temporary_file_path, $new_file_path);
+                $image_path = 'uploads/' . basename($new_file_path); // Store relative path
+            } else {
+                $invalid_file_detected = true;
+            }
+        }
 
-       
-        // Prepare the SQL statement to update the character
-        $query = "UPDATE characters SET name = :name, description = :description, image = :image, updated_at = NOW() WHERE character_id = :character_id";
-        $statement = $db->prepare($query);
-        $statement->bindParam(':name', $name, PDO::PARAM_STR);
-        $statement->bindParam(':description', $description, PDO::PARAM_STR);
-        $statement->bindParam(':image', $image, PDO::PARAM_STR);
-        $statement->bindParam(':character_id', $character_id, PDO::PARAM_INT);
-        
+        if (!$invalid_file_detected) {
+            // Prepare the SQL statement to update the character
+            $query = "UPDATE characters SET name = :name, description = :description, image = :image, updated_at = NOW() WHERE character_id = :character_id";
+            $statement = $db->prepare($query);
+            $statement->bindParam(':name', $name, PDO::PARAM_STR);
+            $statement->bindParam(':description', $description, PDO::PARAM_STR);
+            $statement->bindParam(':image', $image_path, PDO::PARAM_STR);
+            $statement->bindParam(':character_id', $character_id, PDO::PARAM_INT);
 
-        // Execute the statement
-        if ($statement->execute()) {
-            // Redirect to the view_character.php page with a success message
-            header("Location: view_character.php?message=Character updated successfully");
-            exit;
+            // Execute the statement
+            if ($statement->execute()) {
+                // Redirect to the view_character.php page with a success message
+                header("Location: view_character.php?message=Character updated successfully");
+                exit;
+            } else {
+                // If there was an error, display an error message
+                echo '<div class="alert alert-danger text-center" role="alert">Error updating character.</div>';
+            }
         } else {
-            // If there was an error, display an error message
-            echo "Error updating character.";
+            echo '<div class="alert alert-danger text-center" role="alert">The uploaded file is not a valid file type. Only JPG, PNG, GIF images are allowed.</div>';
         }
     }
-} else {
-    // If the character ID is not provided, display an error message
-    echo "Invalid request.";
 }
 ?>
 
 
 <body>
-    <h1>Edit Character</h1>
-    <form method="post" action="edit_character.php?id=<?php echo $character_id; ?>">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($character['name']); ?>" required>
-        <br>
-        <label for="description">Description:</label>
-        <textarea id="description" name="description" required><?php echo htmlspecialchars($character['description']); ?></textarea>
-        <br>
-        <label for="image">Image:</label>
-        <input type="text" id="image" name="image" value="<?php echo htmlspecialchars($character['image']); ?>" required>
-        <br>
-        <button type="submit">Update Character</button>
-    </form>
+    <main>
+        <div class="container py-4">
+            <!-- Breadcrumb Begin -->
+            <nav class="breadcrumb-nav py-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="view_character.php">Characters</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+    <!-- Breadcrumb End -->
+
+        <hr class="featurette-divider mt-2">
+
+        <div class="container mt-5">
+            <h1 class="mb-4">Edit Character</h1>
+            <form method="post" action="edit_character.php?id=<?php echo $character_id; ?>" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($character['name']); ?>" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description">Description:</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required><?php echo htmlspecialchars($character['description']); ?></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="image">Image:</label>
+                    <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
+                    <img src="<?php echo htmlspecialchars($character['image']); ?>" alt="Character Image" class="img-thumbnail mt-2" width="150">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Character</button>
+            </form>
+        </div>
+        <!-- Include Bootstrap JS and dependencies -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </main>
 </body>
+<?php include('footer.php'); ?>

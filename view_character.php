@@ -5,7 +5,7 @@ include('header.php');
 
 // Fetch all characters from the database
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$query = "SELECT character_id, name, description, image, TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minutes_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";
+$query = "SELECT character_id, name, description, image, created_at, TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minutes_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";
 $statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
 $statement->execute();
@@ -37,64 +37,81 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                     <li class="breadcrumb-item active" aria-current="page">Characters</li>
                 </ol>
             </nav>
-    <!-- Breadcrumb End -->
+            <!-- Breadcrumb End -->
 
-    <hr class="featurette-divider mt-2">
+            <hr class="featurette-divider mt-2">
 
-
-    <div class="d-flex justify-content-between align-items-center mt-5">
-        <div class="d-flex align-items-center">
-            <h1 class="featurette-heading fw-normal lh-1 me-3">New Character</h1>
-            <a class="btn btn-primary" href="create_character.php">Create New Character</a>
-        </div>
-        <form class="d-flex" role="search" method="get" action="view_character.php">
-            <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-    </div>
-
-    
-
-    <!-- Pagination Begin -->
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center mt-4">
-            <li class="page-item <?php if ($current_page <= 1) echo 'disabled'; ?>">
-                <a class="page-link" href="?page=<?php echo $current_page - 1; ?>" tabindex="-1" aria-disabled="true">Previous</a>
-            </li>
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <li class="page-item <?php if ($i == $current_page) echo 'active'; ?>"><a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
-            <?php endfor; ?>
-            <li class="page-item <?php if ($current_page >= $total_pages) echo 'disabled'; ?>">
-                <a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Next</a>
-            </li>
-        </ul>
-    </nav>
-    <!-- Pagination End -->
-
-<div class="album py-5 bg-body-tertiary">
-    <div class="container">
-        <div class="row justify-content-center row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <?php foreach ($current_characters as $character): ?>
-            <div class="col">
-                <div class="card shadow-sm">
-                    <img src="uploads/<?php echo filter_var(basename($character['image']), FILTER_SANITIZE_SPECIAL_CHARS); ?>" class="bd-placeholder-img card-img-top" width="100%" height="400" alt="<?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?>">
-                    <div class="card-body">
-                        <h5 class="character-name" style="color: red;"><?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?></h5>
-                        <p class="card-text"><?php echo filter_var($character['description'], FILTER_SANITIZE_SPECIAL_CHARS); ?></p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <a class="btn btn-sm btn-danger" href="delete_character.php?id=<?php echo $character['character_id']; ?>" onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
-                                <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
-                            </div>
-                            <small class="text-body-secondary"><?php echo $character['minutes_ago']; ?> mins ago</small>
-                        </div>
+            <div class="d-flex justify-content-between align-items-center mt-5">
+                <div class="d-flex align-items-center">
+                    <h1 class="featurette-heading fw-normal lh-1 me-3">New Character</h1>
+                    <a class="btn btn-primary" href="create_character.php">Create New Character</a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <form class="d-flex me-2" role="search" method="get" action="view_character.php">
+                        <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                        <button class="btn btn-outline-success" id="button" type="submit">Search</button>
+                    </form>
+                    <p class="mb-0 me-2">Sort by:</p>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            A-Z
+                        </button>
+                        <ul class="dropdown-menu sort-dropdown" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item sort-option" href="#" onclick="sortCharacters('A-Z')">A-Z</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" onclick="sortCharacters('Z-A')">Z-A</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" onclick="sortCharacters('Newest')">Newest</a></li>
+                            <li><a class="dropdown-item sort-option" href="#" onclick="sortCharacters('Oldest')">Oldest</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
+
+            <!-- Pagination Begin -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-4">
+                    <li class="page-item <?php if ($current_page <= 1) echo 'disabled'; ?>">
+                        <a class="page-link" href="?page=<?php echo $current_page - 1; ?>" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?php if ($i == $current_page) echo 'active'; ?>"><a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
+                    <?php endfor; ?>
+                    <li class="page-item <?php if ($current_page >= $total_pages) echo 'disabled'; ?>">
+                        <a class="page-link" href="?page=<?php echo $current_page + 1; ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Pagination End -->
+
+            <div class="album py-5 bg-body-tertiary">
+                <div class="container">
+                    <div class="row justify-content-center row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="character-container">
+                        <?php foreach ($current_characters as $character): ?>
+                        <div class="col character-box" data-created="<?php echo $character['created_at']; ?>">
+                            <div class="card shadow-sm">
+                                <img src="uploads/<?php echo filter_var(basename($character['image']), FILTER_SANITIZE_SPECIAL_CHARS); ?>" class="bd-placeholder-img card-img-top" width="100%" height="400" alt="<?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?>">
+                                <div class="card-body">
+                                    <h5 class="character-name" style="color: red;"><?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?></h5>
+                                    <p class="card-text"><?php echo filter_var($character['description'], FILTER_SANITIZE_SPECIAL_CHARS); ?></p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-danger" href="delete_character.php?id=<?php echo $character['character_id']; ?>" onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
+                                            <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
+                                        </div>
+                                        <small class="text-body-secondary"><?php echo $character['minutes_ago']; ?> mins ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-   
-    </body>
-</main>
+    </main>
+</body>
+
+
+
+<?php
+include('footer.php');
+?>

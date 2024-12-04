@@ -3,11 +3,6 @@ require('connect.php');
 include('functions.php');
 include('header.php');
 
-// Fetch all characters from the database
-$query = "SELECT * FROM characters ORDER BY character_id DESC";
-$statement = $db->prepare($query);
-$statement->execute();
-$characters = $statement->fetchAll();
 ?>
 
 
@@ -28,20 +23,6 @@ $characters = $statement->fetchAll();
                 <img src="image/categorieslogo.gif" width="40" height="32" class="me-2" alt="Logo">
                     <span class="fs-4">Categories Overview</span>
                 </a>
-                <div class="d-flex align-items-center">
-                    <p class="mb-0 me-2">Sort by:</p>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            A-Z
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li><a class="dropdown-item" href="#" onclick="document.getElementById('dropdownMenuButton').innerText = 'A-Z'">A-Z</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="document.getElementById('dropdownMenuButton').innerText = 'Z-A'">Z-A</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="document.getElementById('dropdownMenuButton').innerText = 'Newest'">Newest</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="document.getElementById('dropdownMenuButton').innerText = 'Oldest'">Oldest</a></li>
-                        </ul>
-                    </div>
-                </div>
             </header>
 
             <div class="p-5 mb-4 rounded-3" style="background-image: url('image/charactercategories.gif'); background-size: cover; background-repeat: no-repeat;">
