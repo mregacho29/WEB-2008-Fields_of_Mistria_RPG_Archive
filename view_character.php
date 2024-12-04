@@ -63,6 +63,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                         <button class="btn btn-outline-success" id="button" type="submit">Search</button>
                     </form>
                     <p class="mb-0 me-2">Sort by:</p>
+
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                             A-Z
@@ -74,6 +75,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                             <li><a class="dropdown-item sort-option" href="#" onclick="sortCharacters('Oldest')">Oldest</a></li>
                         </ul>
                     </div>
+                    
                 </div>
             </div>
 
