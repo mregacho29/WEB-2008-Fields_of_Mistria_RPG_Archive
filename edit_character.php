@@ -120,10 +120,20 @@ if (isset($_GET['id'])) {
                     <label for="description">Description:</label>
                     <textarea class="form-control" id="description" name="description" rows="3" required><?php echo htmlspecialchars($character['description']); ?></textarea>
                 </div>
+
+
                 <div class="form-group mb-3">
                     <label for="image">Image:</label>
                     <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
-                    <img src="<?php echo filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS); ?>" alt="Character Image" class="img-thumbnail mt-2" width="150">                </div>
+                    <?php
+                    $image_path = filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS);
+                    if (file_exists($image_path)) {
+                        echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
+                    } else {
+                        echo '<p class="text-danger">Image not found.</p>';
+                    }
+                    ?>
+                </div>
                 <button type="submit" class="btn btn-primary">Update Character</button>
             </form>
         </div>
