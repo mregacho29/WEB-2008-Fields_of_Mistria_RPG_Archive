@@ -29,7 +29,17 @@
       bsAlert.close();
     }
   }, 3000);
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+        tinymce.init({
+            selector: 'textarea.wysiwyg-editor',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            toolbar_mode: 'floating',
+        });
+    });
 </script>
-<?php get_message(); ?>
+
+
 </body>
 </html>

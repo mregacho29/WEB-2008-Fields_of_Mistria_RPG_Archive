@@ -43,6 +43,10 @@ if (isset($_GET['id'])) {
         $name = $_POST['name'];
         $description = $_POST['description'];
 
+        // Sanitize the description
+        $description = filter_var($description, FILTER_SANITIZE_SPECIAL_CHARS);
+
+
         // Handle file upload
         $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
         $upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
@@ -102,43 +106,43 @@ if (isset($_GET['id'])) {
                     <li class="breadcrumb-item active" aria-current="page">Edit</li>
                 </ol>
             </nav>
-    <!-- Breadcrumb End -->
+            <!-- Breadcrumb End -->
 
+            <hr class="featurette-divider mt-5 mb-3">
 
-
-
-        <hr class="featurette-divider mt-2">
-
-        <div class="container mt-5">
-            <h1 class="mb-4">Edit Character</h1>
-            <form method="post" action="edit_character.php?id=<?php echo $character_id; ?>" enctype="multipart/form-data">
-                <div class="form-group mb-3">
-                    <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($character['name']); ?>" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="description">Description:</label>
-                    <textarea class="form-control" id="description" name="description" rows="3" required><?php echo htmlspecialchars($character['description']); ?></textarea>
-                </div>
-
-
-                <div class="form-group mb-3">
-                    <label for="image">Image:</label>
-                    <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
-                    <?php
-                    $image_path = filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS);
-                    
-                    // debug
-                    // if (file_exists($image_path)) {
-                    //     echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
-                    // } else {
-                    //     echo '<p class="text-danger">Image not found.</p>';
-                    // }
-                    ?>
-                </div>
-                <button type="submit" class="btn btn-primary">Update Character</button>
-            </form>
+            <div class="container mt-5">
+                <h1 class="mb-4">Edit Character</h1>
+                <form method="post" action="edit_character.php?id=<?php echo $character_id; ?>" enctype="multipart/form-data">
+                    <div class="form-group mb-3 mt-5">
+                        <label for="name" class="mb-2">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($character['name']); ?>" required>
+                    </div>
+                    <div class="form-group mb-3 mt-5">
+                        <label for="description" class="mb-2">Description:</label>
+                        <textarea class="form-control wysiwyg-editor" id="description" name="description" rows="3" required><?php echo htmlspecialchars($character['description']); ?></textarea>
+                    </div>
+                    <div class="form-group mb-3 mt-5">
+                        <label for="image" class="mb-2">Image:</label>
+                        <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
+                        <?php
+                        $image_path = filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS);
+                        
+                        // debug
+                        // if (file_exists($image_path)) {
+                        //     echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
+                        // } else {
+                        //     echo '<p class="text-danger">Image not found.</p>';
+                        // }
+                        ?>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Character</button>
+                </form>
+            </div>
         </div>
     </main>
 </body>
-<?php include('footer.php'); ?>
+
+
+<?php
+include('footer.php');
+?>

@@ -16,7 +16,9 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fetch the user's role from the database
 $user_id = $_SESSION['user_id'];
-$query = "SELECT role FROM users WHERE user_id = :user_id";
+$query = "  SELECT role 
+            FROM users 
+            WHERE user_id = :user_id";
 $statement = $db->prepare($query);
 $statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $statement->execute();
@@ -60,7 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (!$invalid_file_detected) {
-        $sql = "INSERT INTO characters (name, image, description, created_at) VALUES (?, ?, ?, NOW())";
+        $sql = "INSERT INTO characters (name, image, description, created_at) 
+                VALUES (?, ?, ?, NOW())";
         $stmt = $db->prepare($sql);
         $stmt->bindParam(1, $name);
         $stmt->bindParam(2, $image_path);
@@ -94,33 +97,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <li class="breadcrumb-item active" aria-current="page">Create</li>
                 </ol>
             </nav>
-    <!-- Breadcrumb End -->
+            <!-- Breadcrumb End -->
 
-    <hr class="featurette-divider mt-2">
+            <hr class="featurette-divider mt-2">
 
-    <div class="container mt-5">
-        <h1 class="mb-4">Add New Character</h1>
-        <?php if (isset($_SESSION['alert_message'])): ?>
-            <div class="alert alert-<?= $_SESSION['alert_type'] ?> text-center" role="alert">
-                <?= $_SESSION['alert_message'] ?>
+            <div class="container mt-5">
+                <h1 class="mb-4">Add New Character</h1>
+                <?php if (isset($_SESSION['alert_message'])): ?>
+                    <div class="alert alert-<?= $_SESSION['alert_type'] ?> text-center" role="alert">
+                        <?= $_SESSION['alert_message'] ?>
+                    </div>
+                    <?php unset($_SESSION['alert_message']); unset($_SESSION['alert_type']); ?>
+                <?php endif; ?>
+                <form method="POST" action="create_character.php" enctype="multipart/form-data">
+                    <div class="form-group mb-3">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="image">Image:</label>
+                        <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control wysiwyg-editor" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Character</button>
+                </form>
             </div>
-            <?php unset($_SESSION['alert_message']); unset($_SESSION['alert_type']); ?>
-        <?php endif; ?>
-        <form method="POST" action="create_character.php" enctype="multipart/form-data">
-            <div class="form-group mb-3">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="image">Image:</label>
-                <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="description">Description:</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Character</button>
-        </form>
-    </div>
+        </div>
+    </main>
 </body>
 
+<?php
+include('footer.php');
+?>

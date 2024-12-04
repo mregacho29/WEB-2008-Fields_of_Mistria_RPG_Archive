@@ -13,6 +13,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap">
     <!-- Link to custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- TinyMCE script -->
+    <script src="https://cdn.tiny.cloud/1/ex9htxor5oal96pp9g5cyom3p4ycoxb0ebkt22fq4x6d361z/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 </head>
 <body>
 

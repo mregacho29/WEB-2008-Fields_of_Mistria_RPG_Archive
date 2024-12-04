@@ -82,12 +82,12 @@ function load() {
 
 
 
-// how to fix the sorting type
 
-/********************************************
-    function:    fetchCharacters
-    Description: fetch all characters from the server
-*********************************************/
+
+
+
+
+
 function fetchCharacters(order) {
     debugMessage("function fetchCharacters");
 
@@ -107,39 +107,63 @@ function fetchCharacters(order) {
             debugMessage("Fetched data:");
             debugMessage(html);
 
-            document.getElementById("character-container").innerHTML = html;
+            // Check if the character-container is not within the navbar-collapse container
+            console.log("Checking character-container placement");
+            let characterContainer = document.getElementById("character-container");
+            if (characterContainer.closest('.navbar-collapse')) {
+                console.warn("character-container is within navbar-collapse");
+            } else {
+                console.log("character-container is not within navbar-collapse");
+                characterContainer.innerHTML = html;
+            }
         })
         .catch(error => {
             console.error("Error fetching data:", error);
         });
 }
 
-/********************************************
-    function:    sortCharacters
-    Description: sort characters based on the selected criteria
-*********************************************/
 function sortCharacters(order) {
-    debugMessage("function sortCharacters");
-
-    fetchCharacters(order);
+    console.log('Sorting characters by:', order);
+    const characterContainer = document.getElementById('character-container');
+    if (characterContainer) {
+        console.log('Character container found:', characterContainer);
+    } else {
+        console.error('Character container not found');
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('order', order);
+    window.location.search = urlParams.toString();
 }
 
-/******************************
-    function:     load
-    description:  execute load function
-************************************/
 document.addEventListener("DOMContentLoaded", load);
 
 function load() {
-    // Attach event listeners to the sort dropdown items
-    document.querySelectorAll(".sort-option").forEach(item => {
-        item.addEventListener("click", function(event) {
-            event.preventDefault();
-            let order = event.target.innerText;
-            document.getElementById("dropdownMenuButton").innerText = order;
-            sortCharacters(order);
-        });
+    // Attach event listeners to the sort dropdown items within the body section
+    document.querySelectorAll(".main-sort-dropdown .sort-option").forEach(item => {
+        // Check if the parent element is not within the navbar-collapse container
+        if (!item.closest('.navbar-collapse')) {
+            item.addEventListener("click", function(event) {
+                event.preventDefault();
+                let order = event.target.innerText;
+                document.getElementById("dropdownMenuButton").innerText = order;
+                sortCharacters(order);
+            });
+        }
     });
 
+
+
+    // Initialize TinyMCE
+    tinymce.init({
+        selector: 'textarea.wysiwyg-editor',
+        plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+        toolbar_mode: 'floating',
+    });
+
+    // Listen for form submit button click
+    document.getElementById("button").addEventListener("click", function(event) {
+        event.preventDefault();
+        displayResults();
+    });
     console.log("load executed");
 }
