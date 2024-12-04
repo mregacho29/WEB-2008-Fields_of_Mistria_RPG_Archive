@@ -127,11 +127,13 @@ if (isset($_GET['id'])) {
                     <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
                     <?php
                     $image_path = filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS);
-                    if (file_exists($image_path)) {
-                        echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
-                    } else {
-                        echo '<p class="text-danger">Image not found.</p>';
-                    }
+                    
+                    // debug
+                    // if (file_exists($image_path)) {
+                    //     echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
+                    // } else {
+                    //     echo '<p class="text-danger">Image not found.</p>';
+                    // }
                     ?>
                 </div>
                 <button type="submit" class="btn btn-primary">Update Character</button>

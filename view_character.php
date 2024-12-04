@@ -5,14 +5,13 @@ include('header.php');
 
 // Fetch all characters from the database
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$query = "SELECT character_id, name, description, image, created_at, TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS minutes_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";
-$statement = $db->prepare($query);
+$query = "SELECT character_id, name, description, image, created_at, updated_at, CONCAT(TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hours ', TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' minutes ago') AS time_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";$statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
 $statement->execute();
 $characters = $statement->fetchAll();
 
 // Pagination logic
-$characters_per_page = 6;
+$characters_per_page = 3;
 $total_characters = count($characters);
 $total_pages = ceil($total_characters / $characters_per_page);
 
