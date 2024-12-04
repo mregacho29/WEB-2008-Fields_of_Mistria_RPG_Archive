@@ -18,6 +18,15 @@
       toast.className = toast.className.replace(" show", "");
     }, 3000);
   }
+
+  // Hide the alert message after 3 seconds
+  setTimeout(function() {
+    var alert = document.querySelector('.alert');
+    if (alert) {
+      var bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    }
+  }, 3000);
 </script>
 <?php get_message(); ?>
 </body>

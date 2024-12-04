@@ -1,69 +1,127 @@
 <?php
-// create_character.php
+include('authenticate.php');
+include('connect.php');
 
-require_once('connect.php');
-require_once('functions.php');
-require_once('file_upload.php'); // Include the file upload functionality
 
-secure(); // Ensure the user is logged in
+
+// Define the file upload functions
+require('file_upload.php');
+
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    echo "Access denied. You must be logged in to create characters.";
+    header("refresh:5;url=view_character.php"); // Redirect after 5 seconds
+    exit;
+}
+
+// Fetch the user's role from the database
+$user_id = $_SESSION['user_id'];
+$query = "SELECT role FROM users WHERE user_id = :user_id";
+$statement = $db->prepare($query);
+$statement->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+$statement->execute();
+$user = $statement->fetch(PDO::FETCH_ASSOC);
+
+// Check if the user has an admin role
+if ($user['role'] !== 'admin') {
+    echo "Access denied. Only admin users can create characters.";
+    header("refresh:3;url=view_character.php"); // Redirect after 3 seconds
+    exit;
+}
 
 include('header.php');
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
+
+
+    // Handle file upload
+    $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+    $upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
+    $invalid_file_detected = false;
     $image_path = '';
 
     if ($image_upload_detected) {
-        $file_filename = $_FILES['file']['name'];
-        $temporary_file_path = $_FILES['file']['tmp_name'];
+        $file_filename = $_FILES['image']['name'];
+        $temporary_file_path = $_FILES['image']['tmp_name'];
         $new_file_path = file_upload_path($file_filename);
 
         if (file_is_valid($temporary_file_path, $new_file_path)) {
+            if (!file_exists(dirname($new_file_path))) {
+                mkdir(dirname($new_file_path), 0777, true);
+            }
             move_uploaded_file($temporary_file_path, $new_file_path);
-            $image_path = $new_file_path;
+            $image_path = 'uploads/' . basename($new_file_path); // Store relative path
         } else {
             $invalid_file_detected = true;
         }
     }
 
-    $query = "INSERT INTO characters (name, description, image) VALUES (:name, :description, :image)";
-    $statement = $db->prepare($query);
-    $statement->bindValue(':name', $name);
-    $statement->bindValue(':description', $description);
-    $statement->bindValue(':image', $image);
-    $statement->execute();
+    if (!$invalid_file_detected) {
+        $sql = "INSERT INTO characters (name, image, description, created_at) VALUES (?, ?, ?, NOW())";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(1, $name);
+        $stmt->bindParam(2, $image_path);
+        $stmt->bindParam(3, $description);
 
-    set_message("Character created successfully!");
-    header('Location: index.php');
+        if ($stmt->execute()) {
+            $_SESSION['alert_message'] = "New character added successfully";
+            $_SESSION['alert_type'] = "success";
+        } else {
+            $_SESSION['alert_message'] = "Error: " . $stmt->errorInfo()[2];
+            $_SESSION['alert_type'] = "danger";
+        }
+    } else {
+        $_SESSION['alert_message'] = "The uploaded file is not a valid file type. Only JPG, PNG, GIF images are allowed.";
+        $_SESSION['alert_type'] = "danger";
+    }
+    header("Location: create_character.php");
     exit;
+
+
 }
 ?>
 
-<form action="file_upload.php" method="post" enctype="multipart/form-data">
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required>
-    
-    <label for="description">Description</label>
-    <textarea id="description" name="description" required></textarea>
-    
-    <label for="image">Image</label>
-    <input type="file" id="image" name="file">
-    
-    <button type="submit">Create Character</button>
-</form>
-    
-    <?php if ($upload_error_detected): ?>
-        <p>Error Number: <?= $_FILES['file']['error'] ?></p>
-    <?php elseif ($invalid_file_detected): ?>
-        <p>The uploaded file is not a valid file type. Only JPG, PNG, GIF images, and PDF documents are allowed.</p>
-    <?php elseif ($image_upload_detected): ?>
-        <p>Client-Side Filename: <?= $_FILES['file']['name'] ?></p>
-        <p>Apparent Mime Type: <?= $_FILES['file']['type'] ?></p>
-        <p>Size in Bytes: <?= $_FILES['file']['size'] ?></p>
-        <p>Temporary Path: <?= $_FILES['file']['tmp_name'] ?></p>
-    <?php endif ?>
+<body>
+    <main>
+        <div class="container py-4">
+            <!-- Breadcrumb Begin -->
+            <nav class="breadcrumb-nav py-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="view_character.php">Characters</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                </ol>
+            </nav>
+    <!-- Breadcrumb End -->
 
+    <hr class="featurette-divider mt-2">
 
+    <div class="container mt-5">
+        <h1 class="mb-4">Add New Character</h1>
+        <?php if (isset($_SESSION['alert_message'])): ?>
+            <div class="alert alert-<?= $_SESSION['alert_type'] ?> text-center" role="alert">
+                <?= $_SESSION['alert_message'] ?>
+            </div>
+            <?php unset($_SESSION['alert_message']); unset($_SESSION['alert_type']); ?>
+        <?php endif; ?>
+        <form method="POST" action="create_character.php" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="image">Image:</label>
+                <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Character</button>
+        </form>
+    </div>
+</body>
 
-<?php include('footer.php'); ?>

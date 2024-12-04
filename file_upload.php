@@ -1,7 +1,5 @@
 <?php
 
-
-
 /*******w******** 
     
     Name: Ma Crizza Lynne Regacho
@@ -69,4 +67,3 @@ use \Gumlet\ImageResize;
         }
     }
 ?>
-

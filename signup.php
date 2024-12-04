@@ -5,6 +5,7 @@ include('functions.php');
 // Redirect logged-in users to the homepage with a message
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
     $_SESSION['alert_message'] = "You are already registered and logged in.";
+    $_SESSION['alert_type'] = "danger";
     header('Location: index.php');
     exit;
 }
