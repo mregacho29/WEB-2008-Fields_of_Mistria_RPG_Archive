@@ -89,7 +89,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
 
                 <div class="d-flex align-items-center">
                     <form class="d-flex me-2" role="search" method="get" action="view_character.php">
-                        <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                        <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars_decode ($_GET['search']) : ''; ?>">
                         <button class="btn btn-outline-success" id="button" type="submit">Search</button>
                     </form>
                 </div>
@@ -133,15 +133,15 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                     <?php foreach ($current_characters as $character): ?>
                         <div class="col character-box" data-created="<?php echo $character['created_at']; ?>">
                             <div class="card shadow-sm">
-                                <img src="uploads/<?php echo filter_var(basename($character['image']), FILTER_SANITIZE_SPECIAL_CHARS); ?>" 
+                                <img src="uploads/<?php echo htmlspecialchars_decode (basename($character['image'])); ?>" 
                                     class="bd-placeholder-img card-img-top" width="100%" height="400" alt="
-                                <?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?>">
+                                <?php echo htmlspecialchars_decode ($character['name']); ?>">
                                 <div class="card-body">
                                     <h5 class="character-name" style="color: red;">
-                                        <?php echo filter_var($character['name'], FILTER_SANITIZE_SPECIAL_CHARS); ?>
+                                        <?php echo htmlspecialchars_decode ($character['name']); ?>
                                     </h5>
                                     <p class="card-text">
-                                        <?php echo filter_var($character['description'], FILTER_SANITIZE_SPECIAL_CHARS); ?>
+                                        <?php echo htmlspecialchars_decode ($character['description']); ?>
                                     </p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">

@@ -43,10 +43,6 @@ if (isset($_GET['id'])) {
         $name = $_POST['name'];
         $description = $_POST['description'];
 
-        // Sanitize the description
-        $description = filter_var($description, FILTER_SANITIZE_SPECIAL_CHARS);
-
-
         // Handle file upload
         $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
         $upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
@@ -94,7 +90,6 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-
 <body>
     <main>
         <div class="container py-4">
@@ -125,14 +120,12 @@ if (isset($_GET['id'])) {
                         <label for="image" class="mb-2">Image:</label>
                         <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
                         <?php
-                        $image_path = filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS);
-                        
-                        // debug
-                        // if (file_exists($image_path)) {
-                        //     echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
-                        // } else {
-                        //     echo '<p class="text-danger">Image not found.</p>';
-                        // }
+                        $image_path = htmlspecialchars($character['image']);
+                        if (file_exists($image_path)) {
+                            echo '<img src="' . $image_path . '" alt="Character Image" class="img-thumbnail mt-2" width="150">';
+                        } else {
+                            echo '<p class="text-danger">Image not found.</p>';
+                        }
                         ?>
                     </div>
                     <button type="submit" class="btn btn-primary">Update Character</button>
@@ -141,7 +134,6 @@ if (isset($_GET['id'])) {
         </div>
     </main>
 </body>
-
 
 <?php
 include('footer.php');
