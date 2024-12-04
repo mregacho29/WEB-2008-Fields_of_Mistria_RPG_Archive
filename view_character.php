@@ -96,7 +96,8 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                                             <a class="btn btn-sm btn-danger" href="delete_character.php?id=<?php echo $character['character_id']; ?>" onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
                                             <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
                                         </div>
-                                        <small class="text-body-secondary"><?php echo $character['time_ago']; ?></small>                                    </div>
+                                        <small class="text-body-secondary"><?php echo $character['time_ago']; ?></small>                                    
+                                    </div>
                                 </div>
                             </div>
                         </div>
