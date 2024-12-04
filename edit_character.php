@@ -1,6 +1,7 @@
 <?php
 require('functions.php');
 require('connect.php');
+include('file_upload.php'); // Include the file where file_upload_path() is defined
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -103,6 +104,9 @@ if (isset($_GET['id'])) {
             </nav>
     <!-- Breadcrumb End -->
 
+
+
+
         <hr class="featurette-divider mt-2">
 
         <div class="container mt-5">
@@ -119,15 +123,10 @@ if (isset($_GET['id'])) {
                 <div class="form-group mb-3">
                     <label for="image">Image:</label>
                     <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif">
-                    <img src="<?php echo htmlspecialchars($character['image']); ?>" alt="Character Image" class="img-thumbnail mt-2" width="150">
-                </div>
+                    <img src="<?php echo filter_var($character['image'], FILTER_SANITIZE_SPECIAL_CHARS); ?>" alt="Character Image" class="img-thumbnail mt-2" width="150">                </div>
                 <button type="submit" class="btn btn-primary">Update Character</button>
             </form>
         </div>
-        <!-- Include Bootstrap JS and dependencies -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </main>
 </body>
 <?php include('footer.php'); ?>
