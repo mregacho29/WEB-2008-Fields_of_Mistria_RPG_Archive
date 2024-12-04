@@ -5,7 +5,7 @@ include('header.php');
 
 // Fetch all characters from the database
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$query = "SELECT character_id, name, description, image, created_at, updated_at, CONCAT(TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hours ', TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' minutes ago') AS time_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";$statement = $db->prepare($query);
+$query = "SELECT character_id, name, description, image, created_at, updated_at, CONCAT(TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hours ', TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' mins ago') AS time_ago FROM characters WHERE name LIKE :search ORDER BY character_id DESC";$statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
 $statement->execute();
 $characters = $statement->fetchAll();
@@ -96,8 +96,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                                             <a class="btn btn-sm btn-danger" href="delete_character.php?id=<?php echo $character['character_id']; ?>" onclick="return confirm('Are you sure you want to delete this character?');">Delete</a>
                                             <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
                                         </div>
-                                        <small class="text-body-secondary"><?php echo $character['minutes_ago']; ?> mins ago</small>
-                                    </div>
+                                        <small class="text-body-secondary"><?php echo $character['time_ago']; ?></small>                                    </div>
                                 </div>
                             </div>
                         </div>
