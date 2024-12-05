@@ -118,15 +118,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="image">Image:</label>
                         <input type="file" class="form-control-file" id="image" name="image" accept=".jpg, .jpeg, .png, .gif" required>
                     </div>
+<<<<<<< HEAD
                     <div class="form-group mb-3">
                         <label for="description">Description:</label>
                         <textarea class="form-control wysiwyg-editor" id="description" name="description" rows="3" required></textarea>
+=======
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" label for="description" id="floatingTextarea"></textarea>
+                        <label for="floatingTextarea">Description</label>
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
                     </div>
                     <button type="submit" class="btn btn-primary">Add Character</button>
                 </form>
             </div>
         </div>
     </main>
+<<<<<<< HEAD
+=======
+
+    <script src="javascript/initialize_WYSIWYG.js"></script>
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
 </body>
 
 <?php

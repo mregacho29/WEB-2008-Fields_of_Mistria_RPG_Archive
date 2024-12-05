@@ -31,6 +31,7 @@
   }, 3000);
 
 
+<<<<<<< HEAD
   document.addEventListener("DOMContentLoaded", function() {
         tinymce.init({
             selector: 'textarea.wysiwyg-editor',
@@ -38,6 +39,9 @@
             toolbar_mode: 'floating',
         });
     });
+=======
+  
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
 </script>
 
 

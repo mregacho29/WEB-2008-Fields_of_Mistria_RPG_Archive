@@ -160,10 +160,14 @@ function load() {
         toolbar_mode: 'floating',
     });
 
+<<<<<<< HEAD
     // Listen for form submit button click
     document.getElementById("button").addEventListener("click", function(event) {
         event.preventDefault();
         displayResults();
     });
+=======
+
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
     console.log("load executed");
 }

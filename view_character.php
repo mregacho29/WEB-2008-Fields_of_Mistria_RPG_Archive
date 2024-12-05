@@ -143,6 +143,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                                     <p class="card-text">
                                         <?php echo htmlspecialchars_decode ($character['description']); ?>
                                     </p>
+<<<<<<< HEAD
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
                                             <a class="btn btn-sm btn-danger" href="delete_character.php?id=
@@ -151,13 +152,31 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                                             <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=
                                                 <?php echo $character['character_id']; ?>">Edit
                                             </a>
+=======
+
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="btn-group">
+                                            <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this character?');" style="display:inline;">
+                                                <input type="hidden" name="character_id" value="<?php echo $character['character_id']; ?>">
+                                                <input type="hidden" name="command" value="Delete">
+                                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                            </form>
+                                            <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
                                         </div>
                                         <small class="text-body-secondary">
                                             <?php echo $character['created_at_time_ago']; ?>
                                             <br>
                                             <?php echo $character['updated_at_time_ago']; ?>
+<<<<<<< HEAD
                                             </small>
                                     </div>
+=======
+                                        </small>
+                                    </div>
+                                    
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
                                 </div>
                             </div>
                         </div>

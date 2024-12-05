@@ -112,9 +112,15 @@ if (isset($_GET['id'])) {
                         <label for="name" class="mb-2">Name:</label>
                         <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($character['name']); ?>" required>
                     </div>
+<<<<<<< HEAD
                     <div class="form-group mb-3 mt-5">
                         <label for="description" class="mb-2">Description:</label>
                         <textarea class="form-control wysiwyg-editor" id="description" name="description" rows="3" required><?php echo htmlspecialchars($character['description']); ?></textarea>
+=======
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" label for="description" id="floatingTextarea"></textarea>
+                        <label for="floatingTextarea">Description</label>
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
                     </div>
                     <div class="form-group mb-3 mt-5">
                         <label for="image" class="mb-2">Image:</label>

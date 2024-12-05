@@ -18,6 +18,7 @@ if (isset($_SESSION['alert_message'])) {
 //     die("Database connection failed.");
 // }
 
+<<<<<<< HEAD
 $query = "SELECT character_id, name, description, image 
     FROM characters 
     ORDER BY character_id DESC";
@@ -30,6 +31,13 @@ $statement->execute();
 
 // fetch the entire Database
 $characters = $statement->fetchAll();
+=======
+// Fetch all characters from the database
+$query = "SELECT character_id, name, description, image FROM characters";
+$statement = $db->prepare($query);
+$statement->execute();
+$characters = $statement->fetchAll(PDO::FETCH_ASSOC);
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
 
 // Debugging: Check if rows are fetched
 // if (empty($rows)) {
@@ -104,14 +112,19 @@ include('header.php');
 
 
 
+<<<<<<< HEAD
 
   <div class="container marketing text-center mt-5">
+=======
+<div class="container marketing text-center mt-5">
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
   <div class="row">
     <?php foreach ($characters as $character): ?>
         <div class="col-lg-4 mx-auto mt-5">
             <?php
             $image_path = 'uploads/' . basename($character['image']);
             ?>
+<<<<<<< HEAD
         <img  src="<?php echo $image_path; ?>" 
               class="bd-placeholder-img rounded-circle character-image" 
               width="250" 
@@ -123,6 +136,27 @@ include('header.php');
               <?php
               $max_length = 200; 
               $description = filter_var($character['description'], FILTER_SANITIZE_SPECIAL_CHARS);
+=======
+            <?php if (file_exists($image_path)): ?>
+                <img src="<?php echo $image_path; ?>" 
+                     class="bd-placeholder-img rounded-circle character-image" 
+                     width="250" 
+                     height="250" 
+                     alt="<?php echo htmlspecialchars_decode($character['name']); ?>">
+            <?php else: ?>
+                <img src="path/to/default/image.jpg" 
+                     class="bd-placeholder-img rounded-circle character-image" 
+                     width="250" 
+                     height="250" 
+                     alt="Default Image">
+            <?php endif; ?>
+              
+            <h2 class="mt-3"><?php echo htmlspecialchars($character['name']); ?></h2>
+            <p>
+              <?php
+              $max_length = 150; 
+              $description = htmlspecialchars_decode($character['description']);
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
               ?>
               <?= strlen($description) > $max_length ? substr($description, 0, $max_length) . '...' : $description ?>
             </p>
@@ -132,7 +166,12 @@ include('header.php');
             </p>
         </div><!-- /.col-lg-4 -->
     <?php endforeach; ?>
+<<<<<<< HEAD
     </div><!-- /.row -->
+=======
+  </div><!-- /.row -->
+</div><!-- /.container -->
+>>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
 
     <!-- START THE FEATURETTES -->
 
