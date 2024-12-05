@@ -12,14 +12,6 @@ require('connect.php');
 require('authenticate.php');
 require('functions.php');
 
-// Initialize confirmation variable.
-$confirmation = false;
-
-// Debugging: Check the POST data
-echo "<pre>";
-print_r($_POST);
-echo "</pre>";
-
 // DELETE: if delete command is received
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id']) && $_POST['command'] == "Delete") {
     // Sanitize user input
@@ -27,7 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id']) && $_
 
     // Check if character_id is valid
     if (!$character_id) {
-        echo "Invalid character ID.";
+        $_SESSION['alert_message'] = "Invalid character ID.";
+        $_SESSION['alert_type'] = "danger";
+        header("Location: view_character.php");
+        exit;
+    }
+
+    // Check if user is logged in
+    if (!isset($_SESSION['user_id'])) {
+        $_SESSION['alert_message'] = "Access denied: user not logged in.";
+        $_SESSION['alert_type'] = "danger";
+        header("Location: view_character.php");
         exit;
     }
 
@@ -40,10 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id']) && $_
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($result['role'] !== 'admin') {
-        die("Access denied: user is not an admin.");
+        $_SESSION['alert_message'] = "Access denied: user is not an admin.";
+        $_SESSION['alert_type'] = "danger";
+        header("Location: view_character.php");
+        exit;
     }
 
-    
     // Query to get the file path of the character
     $query = "SELECT image FROM characters WHERE character_id = ?";
     $stmt = $db->prepare($query);
@@ -52,57 +56,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['character_id']) && $_
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$result) {
-        die("Character not found.");
+        $_SESSION['alert_message'] = "Character not found.";
+        $_SESSION['alert_type'] = "danger";
+        header("Location: view_character.php");
+        exit;
     }
 
     $image = $result['image'];
-
-    // Debugging: Check if the file path is correct
-    echo "File path: " . $image . "<br>";
 
     // Build the parameterized SQL query to delete the character
     $query = "DELETE FROM characters WHERE character_id = ? LIMIT 1";
     $stmt = $db->prepare($query);
     $stmt->bindParam(1, $character_id, PDO::PARAM_INT);
 
-
     // Execute the statement
     if ($stmt->execute()) {
         // Delete the file from the server
         if (file_exists($image)) {
             if (!unlink($image)) {
-                die("Failed to delete file.");
+                $_SESSION['alert_message'] = "Failed to delete file.";
+                $_SESSION['alert_type'] = "danger";
+                header("Location: view_character.php");
+                exit;
             }
         } else {
-            die("File not found: " . $image);
+            $_SESSION['alert_message'] = "File not found: " . $image;
+            $_SESSION['alert_type'] = "danger";
+            header("Location: view_character.php");
+            exit;
         }
-        $confirmation = "Character and associated file deleted successfully.";
+        $_SESSION['alert_message'] = "Character and associated file deleted successfully.";
+        $_SESSION['alert_type'] = "success";
     } else {
         // Debugging: Check for SQL errors
         $errorInfo = $stmt->errorInfo();
-        $confirmation = "Failed to delete character from database. SQL Error: " . $errorInfo[2];
+        $_SESSION['alert_message'] = "Failed to delete character from database. SQL Error: " . $errorInfo[2];
+        $_SESSION['alert_type'] = "danger";
     }
+    header("Location: view_character.php");
+    exit;
 } else {
-    echo "No POST data received.";
+    $_SESSION['alert_message'] = "No POST data received.";
+    $_SESSION['alert_type'] = "danger";
+    header("Location: view_character.php");
+    exit;
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <title>Delete Character</title>
-</head>
-<body>
-    <!-- Remember that alternative syntax is good and html inside php is bad -->
-    <?php if($confirmation): ?>
-        <h2><?= $confirmation ?></h2>
-    <?php else: ?>
-        <h1>An error occurred while processing your request.</h1>
-    <?php endif ?>
-    <a href="index.php">Return Home</a>
-</body>
-</html>

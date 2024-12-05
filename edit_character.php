@@ -5,10 +5,12 @@ include('file_upload.php'); // Include the file where file_upload_path() is defi
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    echo '<div class="alert alert-danger text-center" role="alert">Access denied. You must be logged in to edit characters.</div>';
-    header("refresh:3;url=view_character.php"); // Redirect after 3 seconds
+    $_SESSION['alert_message'] = "Access denied. You must be logged in to create characters.";
+    $_SESSION['alert_type'] = "danger";
+    header("Location: index.php");
     exit;
 }
+
 include('header.php');
 
 // Fetch the user's role from the database
@@ -25,6 +27,8 @@ if ($user['role'] !== 'admin') {
     header("refresh:3;url=view_character.php"); // Redirect after 3 seconds
     exit;
 }
+
+
 
 // Check if the character ID is provided
 if (isset($_GET['id'])) {
@@ -112,15 +116,9 @@ if (isset($_GET['id'])) {
                         <label for="name" class="mb-2">Name:</label>
                         <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($character['name']); ?>" required>
                     </div>
-<<<<<<< HEAD
                     <div class="form-group mb-3 mt-5">
                         <label for="description" class="mb-2">Description:</label>
-                        <textarea class="form-control wysiwyg-editor" id="description" name="description" rows="3" required><?php echo htmlspecialchars($character['description']); ?></textarea>
-=======
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" label for="description" id="floatingTextarea"></textarea>
-                        <label for="floatingTextarea">Description</label>
->>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
+                        <textarea class="form-control wysiwyg-editor" id="description" name="description" rows="3" ><?php echo htmlspecialchars($character['description']); ?></textarea>
                     </div>
                     <div class="form-group mb-3 mt-5">
                         <label for="image" class="mb-2">Image:</label>
@@ -139,8 +137,12 @@ if (isset($_GET['id'])) {
             </div>
         </div>
     </main>
+    <!-- Include the WYSIWYG editor initialization script -->
+    <script src="javascript/initialize_WYSIWYG.js"></script>
 </body>
 
 <?php
 include('footer.php');
 ?>
+
+

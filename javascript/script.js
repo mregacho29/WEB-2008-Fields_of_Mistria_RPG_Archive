@@ -155,19 +155,11 @@ function load() {
 
     // Initialize TinyMCE
     tinymce.init({
-        selector: 'textarea.wysiwyg-editor',
-        plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-        toolbar_mode: 'floating',
+        selector: '.wysiwyg-editor',
+        plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+        menubar: false
     });
 
-<<<<<<< HEAD
-    // Listen for form submit button click
-    document.getElementById("button").addEventListener("click", function(event) {
-        event.preventDefault();
-        displayResults();
-    });
-=======
-
->>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
     console.log("load executed");
 }

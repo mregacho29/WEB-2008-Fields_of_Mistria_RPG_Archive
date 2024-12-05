@@ -3,6 +3,17 @@ require('connect.php');
 include('functions.php');
 include('header.php');
 
+// Display alert message if set
+if (isset($_SESSION['alert_message'])) {
+    $alert_message = $_SESSION['alert_message'];
+    $alert_type = isset($_SESSION['alert_type']) ? $_SESSION['alert_type'] : 'success'; // Default to success if not set
+    echo '<div class="alert alert-' . $alert_type . ' alert-dismissible fade show text-center alert-overlay" role="alert">' . $alert_message . '
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>';
+    unset($_SESSION['alert_message']);
+    unset($_SESSION['alert_type']);
+}
+
 // Fetch all characters from the database
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
 $order = isset($_GET['order']) ? $_GET['order'] : 'A-Z';
@@ -27,11 +38,11 @@ $query = "  SELECT character_id,
             created_at, 
             updated_at, 
             CONCAT('Created: ', TIMESTAMPDIFF(HOUR, created_at, NOW()), 
-            ' hours ', 
+            ' hrs ', 
             TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' mins ago') 
                 AS created_at_time_ago, 
             CONCAT('Updated: ', TIMESTAMPDIFF(HOUR, updated_at, NOW()), 
-            ' hours ', 
+            ' hrs ', 
             TIMESTAMPDIFF(MINUTE, updated_at, NOW()) % 60, ' mins ago') 
                 AS updated_at_time_ago 
                 FROM characters 
@@ -130,12 +141,20 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
             <div class="album py-5 bg-body-tertiary">
                 <div class="container">
                 <div class="row justify-content-center row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="character-container">                        
+                    
+                    <!-- PHP foreach Starts -->
                     <?php foreach ($current_characters as $character): ?>
+                        <!-- DIV Character-box Starts -->
                         <div class="col character-box" data-created="<?php echo $character['created_at']; ?>">
+                            <!-- DIV Card Shadow Starts -->
                             <div class="card shadow-sm">
-                                <img src="uploads/<?php echo htmlspecialchars_decode (basename($character['image'])); ?>" 
-                                    class="bd-placeholder-img card-img-top" width="100%" height="400" alt="
-                                <?php echo htmlspecialchars_decode ($character['name']); ?>">
+                                <img    src="uploads/<?php echo htmlspecialchars_decode (basename($character['image'])); ?>" 
+                                        class="bd-placeholder-img card-img-top" 
+                                        width="100%" 
+                                        height="400" 
+                                        alt="
+                                        <?php echo htmlspecialchars_decode ($character['name']); ?>">
+                                <!-- DIV Card-body Starts-->
                                 <div class="card-body">
                                     <h5 class="character-name" style="color: red;">
                                         <?php echo htmlspecialchars_decode ($character['name']); ?>
@@ -143,44 +162,36 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                                     <p class="card-text">
                                         <?php echo htmlspecialchars_decode ($character['description']); ?>
                                     </p>
-<<<<<<< HEAD
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="btn-group">
-                                            <a class="btn btn-sm btn-danger" href="delete_character.php?id=
-                                                <?php echo $character['character_id']; ?>" onclick="return confirm('Are you sure you want to delete this character?');">Delete
-                                            </a>
+
+                                    <!-- DIV Delete Character Button Starts -->
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <!-- DIV Btn-grp Starts -->
+                                        <div class="btn-group mr-5">
                                             <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=
                                                 <?php echo $character['character_id']; ?>">Edit
                                             </a>
-=======
-
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="btn-group">
                                             <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this character?');" style="display:inline;">
                                                 <input type="hidden" name="character_id" value="<?php echo $character['character_id']; ?>">
                                                 <input type="hidden" name="command" value="Delete">
                                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                             </form>
-                                            <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
->>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
                                         </div>
+                                        <!-- DIV Btn-grp Ends -->
                                         <small class="text-body-secondary">
                                             <?php echo $character['created_at_time_ago']; ?>
                                             <br>
                                             <?php echo $character['updated_at_time_ago']; ?>
-<<<<<<< HEAD
-                                            </small>
-                                    </div>
-=======
                                         </small>
                                     </div>
-                                    
->>>>>>> 46b5c06 (Reinitialize repository, fix delete.php)
+                                    <!-- DIV Delete Character Button Ends --> 
                                 </div>
+                                <!-- DIV Card-body End -->
                             </div>
+                            <!-- DIV Card Shadow Ends -->
                         </div>
-                        <?php endforeach; ?>
+                        <!-- DIV Character-box Ends -->
+                    <?php endforeach; ?>
+                    <!-- PHP foreach Ends -->
                     </div>
                 </div>
             </div>
