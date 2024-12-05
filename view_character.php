@@ -51,10 +51,10 @@ $query = "  SELECT character_id,
 $statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
 $statement->execute();
-$characters = $statement->fetchAll();
+$characters = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 // Pagination logic
-$characters_per_page = 3;
+$characters_per_page = 6;
 $total_characters = count($characters);
 $total_pages = ceil($total_characters / $characters_per_page);
 
@@ -67,15 +67,16 @@ $offset = ($current_page - 1) * $characters_per_page;
 
 // Fetch the characters for the current page
 $current_characters = array_slice($characters, $offset, $characters_per_page);
+
 ?>
 
 <body>
     <main>
         <div class="container py-4">
             <!-- Breadcrumb Begin -->
-            <nav    class="breadcrumb-nav py-4" 
-                    style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" 
-                    aria-label="breadcrumb">
+            <nav class="breadcrumb-nav py-4" 
+                 style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" 
+                 aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Characters</li>
@@ -83,12 +84,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
             </nav>
             <!-- Breadcrumb End -->
 
-
-            
             <hr class="featurette-divider mt-2">
-
-
-
 
             <!-- Functions Search / Sort -->
             <div class="d-flex justify-content-between align-items-center mt-5">
@@ -97,7 +93,6 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                     <a class="btn btn-primary" href="create_character.php">Create</a>
                 </div>
 
-
                 <div class="d-flex align-items-center">
                     <form class="d-flex me-2" role="search" method="get" action="view_character.php">
                         <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars_decode ($_GET['search']) : ''; ?>">
@@ -105,10 +100,8 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                     </form>
                 </div>
 
-
                 <div class="dropdown sort-dropdown-menu" id="character-sort-dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                
                         Sort By
                     </button>
                     <ul class="dropdown-menu sort-dropdown" aria-labelledby="dropdownMenuButton">
@@ -140,65 +133,81 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
 
             <div class="album py-5 bg-body-tertiary">
                 <div class="container">
-                <div class="row justify-content-center row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="character-container">                        
-                    
-                    <!-- PHP foreach Starts -->
-                    <?php foreach ($current_characters as $character): ?>
-                        <!-- DIV Character-box Starts -->
-                        <div class="col character-box" data-created="<?php echo $character['created_at']; ?>">
-                            <!-- DIV Card Shadow Starts -->
-                            <div class="card shadow-sm">
-                                <img    src="uploads/<?php echo htmlspecialchars_decode (basename($character['image'])); ?>" 
-                                        class="bd-placeholder-img card-img-top" 
-                                        width="100%" 
-                                        height="400" 
-                                        alt="
-                                        <?php echo htmlspecialchars_decode ($character['name']); ?>">
-                                <!-- DIV Card-body Starts-->
-                                <div class="card-body">
-                                    <h5 class="character-name" style="color: red;">
-                                        <?php echo htmlspecialchars_decode ($character['name']); ?>
-                                    </h5>
-                                    <p class="card-text">
-                                        <?php echo htmlspecialchars_decode ($character['description']); ?>
-                                    </p>
-
-                                    <!-- DIV Delete Character Button Starts -->
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <!-- DIV Btn-grp Starts -->
-                                        <div class="btn-group mr-5">
-                                            <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=
-                                                <?php echo $character['character_id']; ?>">Edit
-                                            </a>
-                                            <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this character?');" style="display:inline;">
-                                                <input type="hidden" name="character_id" value="<?php echo $character['character_id']; ?>">
-                                                <input type="hidden" name="command" value="Delete">
-                                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                            </form>
+                    <div class="row justify-content-center row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="character-container">
+                        <?php
+                        // Get the character_id from the URL if set
+                        if (isset($_GET['character_id'])) {
+                            $character_id = intval($_GET['character_id']);
+                            // Fetch and display the character details using $character_id
+                            $character_query = "SELECT character_id, name, description, image, created_at, updated_at, 
+                                                CONCAT('Created: ', TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hrs ', 
+                                                TIMESTAMPDIFF(MINUTE, created_at, NOW()) % 60, ' mins ago') AS created_at_time_ago, 
+                                                CONCAT('Updated: ', TIMESTAMPDIFF(HOUR, updated_at, NOW()), ' hrs ', 
+                                                TIMESTAMPDIFF(MINUTE, updated_at, NOW()) % 60, ' mins ago') AS updated_at_time_ago 
+                                                FROM characters WHERE character_id = :character_id";
+                            $character_statement = $db->prepare($character_query);
+                            $character_statement->bindParam(':character_id', $character_id, PDO::PARAM_INT);
+                            $character_statement->execute();
+                            $character = $character_statement->fetch(PDO::FETCH_ASSOC);
+                            if ($character) {
+                                ?>
+                                <div class="col character-box" data-created="<?php echo $character['created_at']; ?>">
+                                    <div class="card shadow-sm">
+                                        <img src="uploads/<?php echo htmlspecialchars_decode(basename($character['image'])); ?>" class="bd-placeholder-img card-img-top" width="100%" height="400" alt="<?php echo htmlspecialchars_decode($character['name']); ?>">
+                                        <div class="card-body">
+                                            <h5 class="character-name" style="color: red;"><?php echo htmlspecialchars_decode($character['name']); ?></h5>
+                                            <p class="card-text"><?php echo htmlspecialchars_decode($character['description']); ?></p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <div class="btn-group mr-5">
+                                                    <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
+                                                    <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this character?');" style="display:inline;">
+                                                        <input type="hidden" name="character_id" value="<?php echo $character['character_id']; ?>">
+                                                        <input type="hidden" name="command" value="Delete">
+                                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                                <small class="text-body-secondary"><?php echo $character['created_at_time_ago']; ?><br><?php echo $character['updated_at_time_ago']; ?></small>
+                                            </div>
                                         </div>
-                                        <!-- DIV Btn-grp Ends -->
-                                        <small class="text-body-secondary">
-                                            <?php echo $character['created_at_time_ago']; ?>
-                                            <br>
-                                            <?php echo $character['updated_at_time_ago']; ?>
-                                        </small>
                                     </div>
-                                    <!-- DIV Delete Character Button Ends --> 
                                 </div>
-                                <!-- DIV Card-body End -->
-                            </div>
-                            <!-- DIV Card Shadow Ends -->
-                        </div>
-                        <!-- DIV Character-box Ends -->
-                    <?php endforeach; ?>
-                    <!-- PHP foreach Ends -->
+                                <?php
+                            } else {
+                                echo 'Character not found';
+                            }
+                        } else {
+                            // Display characters for the current page
+                            foreach ($current_characters as $character) {
+                                ?>
+                                <div class="col character-box" data-created="<?php echo $character['created_at']; ?>">
+                                    <div class="card shadow-sm">
+                                        <img src="uploads/<?php echo htmlspecialchars_decode(basename($character['image'])); ?>" class="bd-placeholder-img card-img-top" width="100%" height="400" alt="<?php echo htmlspecialchars_decode($character['name']); ?>">
+                                        <div class="card-body">
+                                            <h5 class="character-name" style="color: red;"><?php echo htmlspecialchars_decode($character['name']); ?></h5>
+                                            <p class="card-text"><?php echo htmlspecialchars_decode($character['description']); ?></p>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <div class="btn-group mr-5">
+                                                    <a class="btn btn-sm btn-outline-secondary" href="edit_character.php?id=<?php echo $character['character_id']; ?>">Edit</a>
+                                                    <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this character?');" style="display:inline;">
+                                                        <input type="hidden" name="character_id" value="<?php echo $character['character_id']; ?>">
+                                                        <input type="hidden" name="command" value="Delete">
+                                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                                <small class="text-body-secondary"><?php echo $character['created_at_time_ago']; ?><br><?php echo $character['updated_at_time_ago']; ?></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
-
 </body>
 
 <?php

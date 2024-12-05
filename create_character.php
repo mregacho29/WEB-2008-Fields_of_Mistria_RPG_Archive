@@ -31,6 +31,15 @@ if ($user['role'] !== 'admin') {
 
 
 
+
+
+
+
+
+
+
+
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
@@ -81,6 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 
 }
+
+
 ?>
 
 <body>

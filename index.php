@@ -41,6 +41,8 @@ $characters = $statement->fetchAll();
 // }
 
 include('header.php');
+
+
 ?>
 
 
@@ -103,42 +105,47 @@ include('header.php');
 
 
 
-
+<!-- CHARACTER DISPLAY -->
 <div class="container marketing text-center mt-5">
   <div class="row">
+    <!-- foreach starts -->
     <?php foreach ($characters as $character): ?>
-        <div class="col-lg-4 mx-auto mt-5">
-            <?php
-            $image_path = 'uploads/' . basename($character['image']);
-            ?>
-            <?php if (file_exists($image_path)): ?>
-                <img src="<?php echo $image_path; ?>" 
-                     class="bd-placeholder-img rounded-circle character-image" 
-                     width="250" 
-                     height="250" 
-                     alt="<?php echo htmlspecialchars_decode($character['name']); ?>">
-            <?php else: ?>
-                <img src="path/to/default/image.jpg" 
-                     class="bd-placeholder-img rounded-circle character-image" 
-                     width="250" 
-                     height="250" 
-                     alt="Default Image">
-            <?php endif; ?>
+        
+      <div class="col-lg-4 mx-auto mt-5">
+        <?php
+        $image_path = 'uploads/' . basename($character['image']);
+        ?>
+        <?php if (file_exists($image_path)): ?>
+          <img src="<?php echo $image_path; ?>" 
+              class="bd-placeholder-img rounded-circle character-image" 
+              width="250" 
+              height="250" 
+              alt="<?php echo htmlspecialchars_decode($character['name']); ?>">
+        <?php else: ?>
+          <img src="path/to/default/image.jpg" 
+                class="bd-placeholder-img rounded-circle character-image" 
+                width="250" 
+                height="250" 
+                alt="Default Image">
+        <?php endif; ?>
               
-            <h2 class="mt-3"><?php echo htmlspecialchars($character['name']); ?></h2>
-            <p>
-              <?php
-              $max_length = 150; 
-              $description = htmlspecialchars_decode($character['description']);
-              ?>
-              <?= strlen($description) > $max_length ? substr($description, 0, $max_length) . '...' : $description ?>
-            </p>
+        <h2 class="mt-3"><?php echo htmlspecialchars($character['name']); ?></h2>
+        <p>
+          <?php
+          $max_length = 150; 
+          $description = htmlspecialchars_decode($character['description']);
+          ?>
+          <?= strlen($description) > $max_length ? substr($description, 0, $max_length) . '...' : $description ?>
+        </p>
 
-            <p>
-                <a class="btn btn-secondary" href="view_character.php">View details &raquo;</a>
-            </p>
+        
+        <p>
+          <a class="btn btn-secondary" href="view_character.php?page=<?php echo $current_page; ?>&character_id=<?php echo htmlspecialchars($character['character_id']); ?>">View details &raquo;</a>
+        </p>
+        
         </div><!-- /.col-lg-4 -->
-    <?php endforeach; ?>
+      <?php endforeach; ?>
+    <!-- foreach ends -->
   </div><!-- /.row -->
 </div><!-- /.container -->
 
