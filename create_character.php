@@ -4,6 +4,8 @@ include('connect.php');
 require('file_upload.php');
 include('header.php');
 
+use Gumlet\ImageResize; // Import the ImageResize class as its not being found in the file_upload.php file
+
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -31,41 +33,42 @@ if ($user['role'] !== 'admin') {
 
 
 
-
-
-
-
-
-
-
-
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $description = $_POST['description'];
 
 
-    // Handle file upload
-    $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-    $upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
-    $invalid_file_detected = false;
-    $image_path = '';
+ // Handle file upload
+$image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+$upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
+$invalid_file_detected = false;
+$image_path = '';
 
-    if ($image_upload_detected) {
-        $file_filename = $_FILES['image']['name'];
-        $temporary_file_path = $_FILES['image']['tmp_name'];
-        $new_file_path = file_upload_path($file_filename);
+if ($image_upload_detected) {
+    $file_filename = $_FILES['image']['name'];
+    $temporary_file_path = $_FILES['image']['tmp_name'];
+    $new_file_path = file_upload_path($file_filename);
 
-        if (file_is_valid($temporary_file_path, $new_file_path)) {
-            if (!file_exists(dirname($new_file_path))) {
-                mkdir(dirname($new_file_path), 0777, true);
-            }
-            move_uploaded_file($temporary_file_path, $new_file_path);
-            $image_path = 'uploads/' . basename($new_file_path); // Store relative path
-        } else {
-            $invalid_file_detected = true;
+    if (file_is_valid($temporary_file_path, $new_file_path)) {
+        if (!file_exists(dirname($new_file_path))) {
+            mkdir(dirname($new_file_path), 0777, true);
         }
+        move_uploaded_file($temporary_file_path, $new_file_path);
+        $image_path = 'uploads/' . basename($new_file_path); // Store relative path
+
+        // Call the image resize function
+        $file_extension = pathinfo($new_file_path, PATHINFO_EXTENSION);
+        if ($file_extension !== 'pdf') {
+            $image = new ImageResize($new_file_path);
+            $image->resizeToWidth(400);
+            $image->save(file_upload_path(pathinfo($file_filename, PATHINFO_FILENAME) . '_medium.' . $file_extension));
+            $image->resizeToWidth(50);
+            $image->save(file_upload_path(pathinfo($file_filename, PATHINFO_FILENAME) . '_thumbnail.' . $file_extension));
+        }
+    } else {
+        $invalid_file_detected = true;
     }
+}
 
     if (!$invalid_file_detected) {
         $sql = "INSERT INTO characters (name, image, description, created_at) 
@@ -90,8 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 
 }
-
-
 ?>
 
 <body>

@@ -48,8 +48,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="categories.php">Categories</a></li>
               <li><a class="dropdown-item" href="view_character.php">Characters</a></li>
-              <li><a class="dropdown-item" href="another_category.php">Events</a></li>
-              <li><a class="dropdown-item" href="something_else.php">Gift Preferences</a></li>
+              <li><a class="dropdown-item" href="events.php">Events</a></li>
+              <li><a class="dropdown-item" href="gifts.php">Gift Preferences</a></li>
             </ul>
           </li>
         </ul>

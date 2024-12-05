@@ -17,7 +17,6 @@ $error_message = ''; // Variable to store error message
 $success_message = ''; // Variable to store success message
 
 
-
 if (!empty($_POST)) {
     $username = $_POST['username'];
     $password = $_POST['password'];
