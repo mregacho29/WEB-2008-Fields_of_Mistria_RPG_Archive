@@ -119,31 +119,30 @@ $characters = $statement->fetchAll(PDO::FETCH_ASSOC);
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="loved_gifts" class="form-label">Loved Gifts</label>
-                        <input type="text" id="loved_gifts" name="loved_gifts" class="form-control" value="<?php echo htmlspecialchars($preference['loved_gifts']); ?>" required />
+                    <div class="form-group mb-3">
+                        <label for="loved_gifts" class="mb-2">Loved Gifts</label>
+                        <textarea class="form-control wysiwyg-editor" id="loved_gifts" name="loved_gifts" rows="3"><?php echo htmlspecialchars_decode($preference['loved_gifts']); ?></textarea>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="liked_gifts" class="form-label">Liked Gifts</label>
-                        <input type="text" id="liked_gifts" name="liked_gifts" class="form-control" value="<?php echo htmlspecialchars($preference['liked_gifts']); ?>" required />
+                    <div class="form-group mb-3">
+                        <label for="liked_gifts" class="mb-2">Liked Gifts</label>
+                        <textarea class="form-control wysiwyg-editor" id="liked_gifts" name="liked_gifts" rows="3"><?php echo htmlspecialchars_decode($preference['liked_gifts']); ?></textarea>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="disliked_gifts" class="form-label">Disliked Gifts</label>
-                        <input type="text" id="disliked_gifts" name="disliked_gifts" class="form-control" value="<?php echo htmlspecialchars($preference['disliked_gifts']); ?>" required />
+                    <div class="form-group mb-3">
+                        <label for="disliked_gifts" class="mb-2">Disliked Gifts</label>
+                        <textarea class="form-control wysiwyg-editor" id="disliked_gifts" name="disliked_gifts" rows="3"><?php echo htmlspecialchars_decode($preference['disliked_gifts']); ?></textarea>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="hated_gifts" class="form-label">Hated Gifts</label>
-                        <input type="text" id="hated_gifts" name="hated_gifts" class="form-control" value="<?php echo htmlspecialchars($preference['hated_gifts']); ?>" required />
+                    <div class="form-group mb-3">
+                        <label for="hated_gifts" class="mb-2">Hated Gifts</label>
+                        <textarea class="form-control wysiwyg-editor" id="hated_gifts" name="hated_gifts" rows="3"><?php echo htmlspecialchars_decode($preference['hated_gifts']); ?></textarea>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="banned_gifts" class="form-label">Banned Gifts</label>
-                        <input type="text" id="banned_gifts" name="banned_gifts" class="form-control" value="<?php echo htmlspecialchars($preference['banned_gifts']); ?>" required />
+                    <div class="form-group mb-3">
+                        <label for="banned_gifts" class="mb-2">Banned Gifts</label>
+                        <textarea class="form-control wysiwyg-editor" id="banned_gifts" name="banned_gifts" rows="3"><?php echo htmlspecialchars_decode($preference['banned_gifts']); ?></textarea>
                     </div>
-
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary mt-4 py-2 px-5">Update Gift Preference</button>
                     </div>

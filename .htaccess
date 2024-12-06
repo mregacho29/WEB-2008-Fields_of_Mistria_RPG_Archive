@@ -5,5 +5,19 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
-# Rewrite the URL
-RewriteRule ^fieldsofmistriarpgarchive/?$ /webdev2/WebDev2Project/ [L]
+# Rewrite rules for pretty URLs
+
+# Redirect index.php to root
+RewriteRule ^index/?$ index.php [L,QSA]
+
+# Handle requests for comments
+RewriteRule ^comments/([0-9]+)/?$ comments.php?comment_id=$1 [L,QSA]
+
+# Handle requests for characters
+RewriteRule ^characters/([0-9]+)/?$ view_character.php?character_id=$1 [L,QSA]
+
+# Handle requests for pages in the 'pages' directory
+RewriteRule ^pages/([a-zA-Z0-9_-]+)/?$ pages/$1.php [L,QSA]
+
+# Handle requests for other PHP files in the root directory
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ $1.php [L,QSA]

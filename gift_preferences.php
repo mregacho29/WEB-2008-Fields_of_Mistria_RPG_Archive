@@ -36,6 +36,11 @@ $query = "SELECT gp.preference_id, gp.character_id, gp.loved_gifts, gp.liked_gif
           FROM gift_preferences gp 
           JOIN characters c ON gp.character_id = c.character_id 
           WHERE c.name LIKE :search
+          OR gp.loved_gifts LIKE :search
+          OR gp.liked_gifts LIKE :search
+          OR gp.disliked_gifts LIKE :search
+          OR gp.hated_gifts LIKE :search
+          OR gp.banned_gifts LIKE :search
           ORDER BY $order_by";
 $statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
@@ -57,7 +62,6 @@ $offset = ($current_page - 1) * $preferences_per_page;
 // Fetch the gift preferences for the current page
 $current_preferences = array_slice($gift_preferences, $offset, $preferences_per_page);
 ?>
-
 <body>
     <main>
         <div class="container py-4">
@@ -145,8 +149,8 @@ $current_preferences = array_slice($gift_preferences, $offset, $preferences_per_
                                     <td><?php echo htmlspecialchars_decode($preference['hated_gifts']); ?></td>
                                     <td><?php echo htmlspecialchars_decode($preference['banned_gifts']); ?></td>
                                     <td>
-                                        <a href="edit_gift_preference.php?id=<?php echo $preference['preference_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="delete_gift_preference.php?id=<?php echo $preference['preference_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this gift preference?');">Delete</a>
+                                        <a href="edit_gift_preferences.php?id=<?php echo $preference['preference_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="delete_gift_preferences.php?id=<?php echo $preference['preference_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this gift preference?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -157,6 +161,8 @@ $current_preferences = array_slice($gift_preferences, $offset, $preferences_per_
             <!-- Table End -->
         </div>
     </main>
+    <!-- Include the WYSIWYG editor initialization script -->
+    <script src="javascript/initialize_WYSIWYG.js"></script>
 </body>
 
 <?php

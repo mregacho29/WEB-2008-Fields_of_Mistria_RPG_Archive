@@ -138,8 +138,6 @@ if (isset($_GET['id'])) {
             </div>
         </div>
     </main>
-    <!-- Include the WYSIWYG editor initialization script -->
-    <script src="javascript/initialize_WYSIWYG.js"></script>
 </body>
 
 <?php

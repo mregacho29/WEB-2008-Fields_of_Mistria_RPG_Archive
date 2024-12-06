@@ -68,3 +68,23 @@
 
 
 
+/* Gallery */
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+}
+.thumbnail {
+  width: 100px;
+  height: auto;
+  margin: 5px;
+}
+.main-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin-bottom: 20px;
+}
+.gallery-item h2 {
+  font-size: 1.4rem; 
+}

@@ -15,7 +15,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="css/style.css">
     <!-- TinyMCE script -->
     <script src="https://cdn.tiny.cloud/1/ex9htxor5oal96pp9g5cyom3p4ycoxb0ebkt22fq4x6d361z/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-</head>
+    <!-- Lightbox -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/luminous-lightbox/2.0.1/luminous-basic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/luminous-lightbox/2.0.1/Luminous.min.js"></script>
+  </head>
 <body>
 
 <!-- Navbar -->

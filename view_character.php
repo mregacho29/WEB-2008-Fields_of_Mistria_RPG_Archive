@@ -209,6 +209,8 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
             </div>
         </div>
     </main>
+    <!-- Include the WYSIWYG editor initialization script -->
+    <script src="javascript/initialize_WYSIWYG.js"></script>
 </body>
 
 <?php

@@ -153,6 +153,8 @@ $current_events = array_slice($events, $offset, $events_per_page);
             <!-- Table End -->
         </div>
     </main>
+    <!-- Include the WYSIWYG editor initialization script -->
+    <script src="javascript/initialize_WYSIWYG.js"></script>
 </body>
 
 <?php
