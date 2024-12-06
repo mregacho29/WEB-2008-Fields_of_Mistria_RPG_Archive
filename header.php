@@ -39,7 +39,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <a class="nav-link <?= ($current_page == 'index.php') ? 'active' : '' ?>" aria-current="page" href="index.php">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link <?= ($current_page == 'news.php') ? 'active' : '' ?>" href="news.php">News</a>
+            <a class="nav-link <?= ($current_page == 'gallery.php') ? 'active' : '' ?>" href="gallery.php">Gallery</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle <?= ($current_page == 'categories.php') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -49,7 +49,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
               <li><a class="dropdown-item" href="categories.php">Categories</a></li>
               <li><a class="dropdown-item" href="view_character.php">Characters</a></li>
               <li><a class="dropdown-item" href="events.php">Events</a></li>
-              <li><a class="dropdown-item" href="gifts.php">Gift Preferences</a></li>
+              <li><a class="dropdown-item" href="gift_preferences.php">Gift Preferences</a></li>
             </ul>
           </li>
         </ul>

@@ -34,18 +34,18 @@ include('header.php');
             </div>
 
             <div class="row align-items-md-stretch">
-                <div class="col-md-6">
-                    <div class="h-100 p-5 text-bg-dark rounded-3">
-                        <h2>Events</h2>
-                        <p>Explore key events that shape the lives of characters in Fields of Mistria. Discover pivotal moments and their impacts on the story</p>
-                        <button class="btn btn-outline-light" type="button">Learn More</button>
-                    </div>
+            <div class="col-md-6">
+                <div class="h-100 p-5 text-bg-dark rounded-3">
+                    <h2>Events</h2>
+                    <p>Explore key events that shape the lives of characters in Fields of Mistria. Discover pivotal moments and their impacts on the story</p>
+                    <a class="btn btn-outline-light" href="events.php" role="button">Learn More</a>
                 </div>
+            </div>
                 <div class="col-md-6">
                     <div class="h-100 p-5 bg-body-tertiary border rounded-3">
                         <h2>Gift Preferences</h2>
                         <p>Learn about the favorite gifts of characters in Fields of Mistria. Discover what items they love and how to build better relationships with them.</p>
-                        <button class="btn btn-outline-secondary" type="button">Learn More</button>
+                        <a class="btn btn-outline-secondary" href="gift_preferences.php" role="button">Learn More</a>
                     </div>
                 </div>
             </div>

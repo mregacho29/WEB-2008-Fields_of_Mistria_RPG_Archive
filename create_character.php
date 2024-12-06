@@ -32,67 +32,66 @@ if ($user['role'] !== 'admin') {
 }
 
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $description = $_POST['description'];
+    $name = htmlspecialchars(trim($_POST['name']));
+    $description = htmlspecialchars(trim($_POST['description']));
 
 
- // Handle file upload
-$image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-$upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
-$invalid_file_detected = false;
-$image_path = '';
+    // Handle file upload
+    $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+    $upload_error_detected = isset($_FILES['image']) && ($_FILES['image']['error'] > 0);
+    $invalid_file_detected = false;
+    $image_path = '';
 
-if ($image_upload_detected) {
-    $file_filename = $_FILES['image']['name'];
-    $temporary_file_path = $_FILES['image']['tmp_name'];
-    $new_file_path = file_upload_path($file_filename);
+    if ($image_upload_detected) {
+        $file_filename = $_FILES['image']['name'];
+        $temporary_file_path = $_FILES['image']['tmp_name'];
+        $new_file_path = file_upload_path($file_filename);
 
-    if (file_is_valid($temporary_file_path, $new_file_path)) {
-        if (!file_exists(dirname($new_file_path))) {
-            mkdir(dirname($new_file_path), 0777, true);
-        }
-        move_uploaded_file($temporary_file_path, $new_file_path);
-        $image_path = 'uploads/' . basename($new_file_path); // Store relative path
+        if (file_is_valid($temporary_file_path, $new_file_path)) {
+            if (!file_exists(dirname($new_file_path))) {
+                mkdir(dirname($new_file_path), 0777, true);
+            }
+            move_uploaded_file($temporary_file_path, $new_file_path);
+            $image_path = 'uploads/' . basename($new_file_path); // Store relative path
 
-        // Call the image resize function
-        $file_extension = pathinfo($new_file_path, PATHINFO_EXTENSION);
-        if ($file_extension !== 'pdf') {
-            $image = new ImageResize($new_file_path);
-            $image->resizeToWidth(400);
-            $image->save(file_upload_path(pathinfo($file_filename, PATHINFO_FILENAME) . '_medium.' . $file_extension));
-            $image->resizeToWidth(50);
-            $image->save(file_upload_path(pathinfo($file_filename, PATHINFO_FILENAME) . '_thumbnail.' . $file_extension));
-        }
-    } else {
-        $invalid_file_detected = true;
-    }
-}
-
-    if (!$invalid_file_detected) {
-        $sql = "INSERT INTO characters (name, image, description, created_at) 
-                VALUES (?, ?, ?, NOW())";
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(1, $name);
-        $stmt->bindParam(2, $image_path);
-        $stmt->bindParam(3, $description);
-
-        if ($stmt->execute()) {
-            $_SESSION['alert_message'] = "New character added successfully";
-            $_SESSION['alert_type'] = "success";
+            // Call the image resize function
+            $file_extension = pathinfo($new_file_path, PATHINFO_EXTENSION);
+            if ($file_extension !== 'pdf') {
+                $image = new ImageResize($new_file_path);
+                $image->resizeToWidth(400);
+                $image->save(file_upload_path(pathinfo($file_filename, PATHINFO_FILENAME) . '_medium.' . $file_extension));
+                $image->resizeToWidth(50);
+                $image->save(file_upload_path(pathinfo($file_filename, PATHINFO_FILENAME) . '_thumbnail.' . $file_extension));
+            }
         } else {
-            $_SESSION['alert_message'] = "Error: " . $stmt->errorInfo()[2];
+            $invalid_file_detected = true;
+        }
+    }
+
+        if (!$invalid_file_detected) {
+            $sql = "INSERT INTO characters (name, image, description, created_at) 
+                    VALUES (?, ?, ?, NOW())";
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(1, $name);
+            $stmt->bindParam(2, $image_path);
+            $stmt->bindParam(3, $description);
+
+            if ($stmt->execute()) {
+                $_SESSION['alert_message'] = "New character added successfully";
+                $_SESSION['alert_type'] = "success";
+            } else {
+                $_SESSION['alert_message'] = "Error: " . $stmt->errorInfo()[2];
+                $_SESSION['alert_type'] = "danger";
+            }
+        } else {
+            $_SESSION['alert_message'] = "The uploaded file is not a valid file type. Only JPG, PNG, GIF images are allowed.";
             $_SESSION['alert_type'] = "danger";
         }
-    } else {
-        $_SESSION['alert_message'] = "The uploaded file is not a valid file type. Only JPG, PNG, GIF images are allowed.";
-        $_SESSION['alert_type'] = "danger";
-    }
-    header("Location: create_character.php");
-    exit;
+        header("Location: create_character.php");
+        exit;
 
-}
+    }
 ?>
 
 <body>
@@ -102,6 +101,7 @@ if ($image_upload_detected) {
             <nav class="breadcrumb-nav py-4" style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="categories.php">Categories</a></li>
                     <li class="breadcrumb-item"><a href="view_character.php">Characters</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Create</li>
                 </ol>

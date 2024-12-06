@@ -14,7 +14,7 @@ if (isset($_SESSION['alert_message'])) {
     unset($_SESSION['alert_type']);
 }
 
-// Fetch all events from the database
+// Fetch all gift preferences from the database
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
 $order = isset($_GET['order']) ? $_GET['order'] : 'A-Z';
 
@@ -22,40 +22,40 @@ $order_by = 'c.name ASC'; // Default to sorting by character's name A-Z
 if ($order === 'Z-A') {
     $order_by = 'c.name DESC'; // Sort by character's name Z-A
 } elseif ($order === 'Newest') {
-    $order_by = 'e.created_at DESC';
+    $order_by = 'gp.created_at DESC';
 } elseif ($order === 'Oldest') {
-    $order_by = 'e.created_at ASC';
+    $order_by = 'gp.created_at ASC';
 } elseif ($order === 'Updated Date') {
-    $order_by = 'e.updated_at DESC';
+    $order_by = 'gp.updated_at DESC';
 } elseif ($order === 'Created Date') {
-    $order_by = 'e.created_at ASC';
+    $order_by = 'gp.created_at ASC';
 }
 
-// Fetch all events from the database
-$query = "SELECT e.event_id, e.character_id, e.event_name, e.description, e.heart_level, c.name AS character_name 
-          FROM events e 
-          JOIN characters c ON e.character_id = c.character_id 
-          WHERE e.event_name LIKE :search OR c.name LIKE :search
+// Fetch all gift preferences from the database
+$query = "SELECT gp.preference_id, gp.character_id, gp.loved_gifts, gp.liked_gifts, gp.disliked_gifts, gp.hated_gifts, gp.banned_gifts, c.name AS character_name 
+          FROM gift_preferences gp 
+          JOIN characters c ON gp.character_id = c.character_id 
+          WHERE c.name LIKE :search
           ORDER BY $order_by";
 $statement = $db->prepare($query);
 $statement->bindParam(':search', $search, PDO::PARAM_STR);
 $statement->execute();
-$events = $statement->fetchAll(PDO::FETCH_ASSOC);
+$gift_preferences = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 // Pagination logic
-$events_per_page = 2;
-$total_events = count($events);
-$total_pages = ceil($total_events / $events_per_page);
+$preferences_per_page = 1;
+$total_preferences = count($gift_preferences);
+$total_pages = ceil($total_preferences / $preferences_per_page);
 
 // Get the current page from the URL, default to 1 if not set
 $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $current_page = max(1, min($total_pages, $current_page));
 
 // Calculate the offset for the SQL query
-$offset = ($current_page - 1) * $events_per_page;
+$offset = ($current_page - 1) * $preferences_per_page;
 
-// Fetch the events for the current page
-$current_events = array_slice($events, $offset, $events_per_page);
+// Fetch the gift preferences for the current page
+$current_preferences = array_slice($gift_preferences, $offset, $preferences_per_page);
 ?>
 
 <body>
@@ -68,7 +68,7 @@ $current_events = array_slice($events, $offset, $events_per_page);
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item"><a href="categories.php">Categories</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Events</li>
+                    <li class="breadcrumb-item active" aria-current="page">Gift Preferences</li>
                 </ol>
             </nav>
             <!-- Breadcrumb End -->
@@ -78,18 +78,18 @@ $current_events = array_slice($events, $offset, $events_per_page);
             <!-- Functions Search / Sort -->    
             <div class="d-flex justify-content-between align-items-center mt-5">
                 <div class="d-flex align-items-center">
-                    <h1 class="featurette-heading fw-normal lh-1 me-3">Create New Event</h1>
-                    <a class="btn btn-primary" href="create_events.php">Create</a>
+                    <h1 class="featurette-heading fw-normal lh-1 me-3">Create New Gift Preference</h1>
+                    <a class="btn btn-primary" href="create_gift_preferences.php">Create</a>
                 </div>
 
                 <div class="d-flex align-items-center">
-                    <form class="d-flex me-2" role="search" method="get" action="events.php">
+                    <form class="d-flex me-2" role="search" method="get" action="gift_preferences.php">
                         <input class="form-control me-2" type="search" id="search" name="search" placeholder="Search" aria-label="Search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                         <button class="btn btn-outline-success" id="button" type="submit">Search</button>
                     </form>
                 </div>
 
-                <div class="dropdown sort-dropdown-menu" id="event-sort-dropdown">
+                <div class="dropdown sort-dropdown-menu" id="preference-sort-dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         Sort By
                     </button>
@@ -127,22 +127,26 @@ $current_events = array_slice($events, $offset, $events_per_page);
                         <thead>
                             <tr>
                                 <th>Character</th>
-                                <th>Event&nbsp;Name</th>
-                                <th>Description</th>
-                                <th>Heart&nbsp;Level</th>
+                                <th>Loved Gifts</th>
+                                <th>Liked Gifts</th>
+                                <th>Disliked Gifts</th>
+                                <th>Hated Gifts</th>
+                                <th>Banned Gifts</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($current_events as $event): ?>
+                            <?php foreach ($current_preferences as $preference): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($event['character_name']); ?></td>
-                                    <td><?php echo htmlspecialchars($event['event_name']); ?></td>
-                                    <td><?php echo htmlspecialchars_decode($event['description']); ?></td>
-                                    <td><?php echo htmlspecialchars($event['heart_level']); ?></td>
+                                    <td><?php echo htmlspecialchars($preference['character_name']); ?></td>
+                                    <td><?php echo htmlspecialchars_decode($preference['loved_gifts']); ?></td>
+                                    <td><?php echo htmlspecialchars_decode($preference['liked_gifts']); ?></td>
+                                    <td><?php echo htmlspecialchars_decode($preference['disliked_gifts']); ?></td>
+                                    <td><?php echo htmlspecialchars_decode($preference['hated_gifts']); ?></td>
+                                    <td><?php echo htmlspecialchars_decode($preference['banned_gifts']); ?></td>
                                     <td>
-                                        <a href="edit_events.php?id=<?php echo $event['event_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="delete_events.php?id=<?php echo $event['event_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this event?');">Delete</a>
+                                        <a href="edit_gift_preference.php?id=<?php echo $preference['preference_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="delete_gift_preference.php?id=<?php echo $preference['preference_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this gift preference?');">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

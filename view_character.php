@@ -54,7 +54,7 @@ $statement->execute();
 $characters = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 // Pagination logic
-$characters_per_page = 6;
+$characters_per_page = 3;
 $total_characters = count($characters);
 $total_pages = ceil($total_characters / $characters_per_page);
 
@@ -79,6 +79,7 @@ $current_characters = array_slice($characters, $offset, $characters_per_page);
                  aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="categories.php">Categories</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Characters</li>
                 </ol>
             </nav>
