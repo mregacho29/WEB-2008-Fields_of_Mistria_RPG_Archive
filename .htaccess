@@ -6,7 +6,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
 # Rewrite rules for pretty URLs
-
 # Redirect index.php to root
 RewriteRule ^index/?$ index.php [L,QSA]
 
