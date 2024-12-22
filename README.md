@@ -1,0 +1,1 @@
+This proposal is to develop a CMS to assist with managing character profiles and the NPC’s gift preferences in the game Fields of Mistria. The CMS will assist with: a) tracking character profiles; b) managing gift preferences; c) enhancing player experience by providing accurate information; and d) allowing users to update and maintain content easily.
